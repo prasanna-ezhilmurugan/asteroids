@@ -1,7 +1,9 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "player.h"
 #include <SDL2/SDL.h>
+#include <SDL_rect.h>
 #include <stdbool.h>
 
 #define WINDOW_TITLE "asteroids"
@@ -14,7 +16,7 @@ typedef struct {
   SDL_Renderer *renderer;
 
   // textures
-  SDL_Texture *texture;
+  player_t player;
 
   // state
   bool is_running;
