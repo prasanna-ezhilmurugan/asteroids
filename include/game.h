@@ -22,5 +22,6 @@ void quit_game(game_t *game);
 
 void handle_event(game_t *game);
 void render(game_t *game);
+void update(game_t *game);
 
 #endif

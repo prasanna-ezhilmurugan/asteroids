@@ -1,3 +1,4 @@
+#include "player.h"
 #include <SDL2/SDL_image.h>
 #include <game.h>
 #include <stdio.h>
@@ -43,6 +44,7 @@ void handle_event(game_t *game) {
     if (event.type == SDL_QUIT) {
       game->is_running = false;
     }
+    player_handle_event(&game->player, &event);
   }
 }
 
@@ -54,6 +56,8 @@ void render(game_t *game) {
 
   SDL_RenderPresent(game->renderer);
 }
+
+void update(game_t *game) { player_update(&game->player); }
 
 void quit_game(game_t *game) {
   if (game->window) {

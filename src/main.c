@@ -7,6 +7,7 @@ int main() {
   while (game.is_running) {
     handle_event(&game);
     render(&game);
+    update(&game);
   }
   quit_game(&game);
   return 0;
