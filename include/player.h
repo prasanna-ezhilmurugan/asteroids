@@ -2,13 +2,14 @@
 #define PLAYER_H
 
 #include <SDL2/SDL.h>
-#include <SDL_render.h>
 
 typedef struct {
   SDL_Texture *texture;
   // props
   float x, y;
   float dx, dy;
+
+  SDL_Rect position;
 
 } player_t;
 

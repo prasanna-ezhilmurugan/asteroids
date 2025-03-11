@@ -1,14 +1,9 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "player.h"
 #include <SDL2/SDL.h>
-#include <SDL_rect.h>
+#include <player.h>
 #include <stdbool.h>
-
-#define WINDOW_TITLE "asteroids"
-#define WINDOW_WIDTH 1280
-#define WINDOW_HEIGHT 720
 
 typedef struct {
   // rendering
