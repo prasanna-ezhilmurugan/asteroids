@@ -29,7 +29,6 @@ player_t player_create(SDL_Renderer *renderer, const char *path) {
 }
 
 void player_render(player_t *player, SDL_Renderer *renderer) {
-  printf("%f", player->angle);
   SDL_RenderCopyEx(renderer, player->texture, NULL, &player->position,
                    player->angle, NULL, SDL_FLIP_NONE);
 }
@@ -38,23 +37,48 @@ void player_handle_event(player_t *player, SDL_Event *event) {
   if (event->type == SDL_KEYDOWN) {
     switch (event->key.keysym.sym) {
     case SDLK_UP:
-      float radian_angle = (M_PI * player->angle) / 180;
-      player->position.x += 10 * cos(radian_angle);
-      player->position.y += 10 * sin(radian_angle);
+      player->directions[eUp] = true;
       break;
     case SDLK_DOWN:
       break;
     case SDLK_RIGHT:
-      player->angle += 15;
+      player->directions[eRight] = true;
       break;
     case SDLK_LEFT:
-      player->angle -= 15;
+      player->directions[eLeft] = true;
+      break;
+    }
+  }
+
+  if (event->type == SDL_KEYUP) {
+    switch (event->key.keysym.sym) {
+    case SDLK_UP:
+      player->directions[eUp] = false;
+      break;
+    case SDLK_LEFT:
+      player->directions[eLeft] = false;
+      break;
+    case SDLK_RIGHT:
+      player->directions[eRight] = false;
       break;
     }
   }
 }
 
-void player_update(player_t *player) {}
+void player_update(player_t *player) {
+  if (player->directions[eUp]) {
+    float radian_angle = (M_PI * player->angle) / 180;
+
+    player->position.x += 10 * cos(radian_angle);
+    player->position.y += 10 * sin(radian_angle);
+  }
+  if (player->directions[eLeft]) {
+    player->angle -= 15;
+  }
+  if (player->directions[eRight]) {
+    player->angle += 15;
+  }
+}
 
 void player_destroy(player_t *player) {
   if (player->texture) {

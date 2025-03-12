@@ -2,6 +2,9 @@
 #define PLAYER_H
 
 #include <SDL2/SDL.h>
+#include <stdbool.h>
+
+enum PlayerDirection { eUp, eDown, eLeft, eRight, eNumDirections };
 
 typedef struct {
   SDL_Texture *texture;
@@ -10,6 +13,7 @@ typedef struct {
 
   SDL_Rect position;
 
+  bool directions[eNumDirections];
 } player_t;
 
 player_t player_create(SDL_Renderer *renderer, const char *path);
