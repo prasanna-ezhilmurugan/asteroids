@@ -1,4 +1,5 @@
 #include <SDL_events.h>
+#include <math.h>
 #include <player.h>
 #include <stdio.h>
 #include <utils.h>
@@ -11,8 +12,8 @@ player_t player_create(SDL_Renderer *renderer, const char *path) {
     exit(EXIT_FAILURE);
   }
 
-  player.dx = 0;
-  player.dy = 0;
+  // player.dx = 0;
+  // player.dy = 0;
 
   // position and size of the texture
   int texture_width = 0, texture_height = 0;
@@ -22,46 +23,38 @@ player_t player_create(SDL_Renderer *renderer, const char *path) {
                                texture_width,
                                texture_height};
 
+  player.angle = 0;
+
   return player;
 }
 
 void player_render(player_t *player, SDL_Renderer *renderer) {
-  SDL_RenderCopyEx(renderer, player->texture, NULL, &player->position, 0, NULL,
-                   SDL_FLIP_NONE);
+  printf("%f", player->angle);
+  SDL_RenderCopyEx(renderer, player->texture, NULL, &player->position,
+                   player->angle, NULL, SDL_FLIP_NONE);
 }
 
 void player_handle_event(player_t *player, SDL_Event *event) {
   if (event->type == SDL_KEYDOWN) {
     switch (event->key.keysym.sym) {
     case SDLK_UP:
-      player->dy += 2;
+      float radian_angle = (M_PI * player->angle) / 180;
+      player->position.x += 10 * cos(radian_angle);
+      player->position.y += 10 * sin(radian_angle);
       break;
     case SDLK_DOWN:
-      player->dy -= 2;
       break;
     case SDLK_RIGHT:
-      player->dx += 2;
+      player->angle += 15;
       break;
     case SDLK_LEFT:
-      player->dx -= 2;
+      player->angle -= 15;
       break;
     }
   }
 }
 
-void player_update(player_t *player) {
-  player->position.x += player->dx;
-  if (player->position.x < 0 ||
-      player->position.x + player->position.w > WINDOW_WIDTH) {
-    player->position.x = 0;
-  }
-
-  player->position.y += player->dy;
-  if (player->position.y < 0 ||
-      player->position.y + player->position.h > WINDOW_HEIGHT) {
-    player->position.y = 0;
-  }
-}
+void player_update(player_t *player) {}
 
 void player_destroy(player_t *player) {
   if (player->texture) {

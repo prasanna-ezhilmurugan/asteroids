@@ -6,7 +6,7 @@
 typedef struct {
   SDL_Texture *texture;
   // props
-  float dx, dy;
+  float angle;
 
   SDL_Rect position;
 
