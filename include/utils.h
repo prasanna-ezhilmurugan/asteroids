@@ -10,4 +10,5 @@
 #define WINDOW_HEIGHT 720
 
 SDL_Texture *load_texture(SDL_Renderer *renderer, const char *path);
+SDL_Texture *load_from_renderer_text(const char *text, const SDL_Color color);
 #endif

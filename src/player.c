@@ -67,6 +67,7 @@ void player_handle_event(player_t *player, SDL_Event *event) {
 
 void player_update(player_t *player) {
   if (player->directions[eUp]) {
+
     float radian_angle = (M_PI * player->angle) / 180;
 
     player->position.x += 10 * cos(radian_angle);

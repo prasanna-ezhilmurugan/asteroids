@@ -1,12 +1,24 @@
 #include "player.h"
 #include <SDL2/SDL_image.h>
+#include <SDL_ttf.h>
 #include <game.h>
 #include <stdio.h>
 #include <utils.h>
 
 bool initialize_game(game_t *game) {
+  // initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     fprintf(stderr, "error: cannot initialize SDL: %s\n", SDL_GetError());
+    return false;
+  }
+  // initialize SDL_Image
+  if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+    fprintf(stderr, "error: cannot initialize SDL image: %s\n", IMG_GetError());
+    return false;
+  }
+  // initialize TTF_Font
+  if (TTF_Init() != 0) {
+    fprintf(stderr, "error: cannot initialize SDL font: %s", TTF_GetError());
     return false;
   }
 
@@ -27,13 +39,14 @@ bool initialize_game(game_t *game) {
     return false;
   }
 
-  // initialize SDL_Image
-  if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-    fprintf(stderr, "error: cannot initialize SDL image: %s\n", IMG_GetError());
+  game->font =
+      TTF_OpenFont("assets/fonts/JetBrainsMonoNLNerdFont-Bold.ttf", 28);
+  if (!game->font) {
+    fprintf(stderr, "error: cannot create SDL font: %s", TTF_GetError());
     return false;
   }
 
-  game->player = player_create(game->renderer, "assets/player.png");
+  game->player = player_create(game->renderer, "assets/sprites/player.png");
 
   return true;
 }
@@ -42,7 +55,7 @@ void handle_event(game_t *game) {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
     if (event.type == SDL_QUIT) {
-      game->is_running = false;
+      game->state[RUNNING] = false;
     }
     player_handle_event(&game->player, &event);
   }

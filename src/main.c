@@ -3,8 +3,8 @@
 game_t game;
 
 int main() {
-  game.is_running = initialize_game(&game);
-  while (game.is_running) {
+  game.state[RUNNING] = initialize_game(&game);
+  while (game.state[RUNNING]) {
     handle_event(&game);
     render(&game);
     update(&game);
