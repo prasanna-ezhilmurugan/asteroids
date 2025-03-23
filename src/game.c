@@ -1,7 +1,7 @@
-#include "player.h"
 #include <SDL2/SDL_image.h>
 #include <SDL_ttf.h>
 #include <game.h>
+#include <player.h>
 #include <stdio.h>
 #include <utils.h>
 
@@ -47,15 +47,20 @@ bool initialize_game(game_t *game) {
   }
 
   game->player = player_create(game->renderer, "assets/sprites/player.png");
+  game->start_screen =
+      load_from_rendered_text(game->renderer, game->font, "START");
 
-  return true;
+  return START;
 }
 
 void handle_event(game_t *game) {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
+    if (game->state == START && event.type == SDL_MOUSEBUTTONDOWN) {
+      game->state = RUNNING;
+    }
     if (event.type == SDL_QUIT) {
-      game->state[RUNNING] = false;
+      game->state = QUIT;
     }
     player_handle_event(&game->player, &event);
   }
@@ -65,11 +70,13 @@ void render(game_t *game) {
   SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 255);
   SDL_RenderClear(game->renderer);
 
-  player_render(&game->player, game->renderer);
-
+  if (game->state == START) {
+    SDL_RenderCopy(game->renderer, game->start_screen, NULL, NULL);
+  } else if (game->state == RUNNING) {
+    player_render(&game->player, game->renderer);
+  }
   SDL_RenderPresent(game->renderer);
 }
-
 void update(game_t *game) { player_update(&game->player); }
 
 void quit_game(game_t *game) {
@@ -80,6 +87,10 @@ void quit_game(game_t *game) {
   if (game->renderer) {
     SDL_DestroyRenderer(game->renderer);
     game->renderer = NULL;
+  }
+  if (game->start_screen) {
+    SDL_DestroyTexture(game->start_screen);
+    game->start_screen = NULL;
   }
   player_destroy(&game->player);
   SDL_Quit();
