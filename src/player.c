@@ -67,14 +67,14 @@ void player_handle_event(player_t *player, SDL_Event *event) {
 
 void player_update(player_t *player, float delta_time) {
   if (player->directions[eUp]) {
-    player->position.x += 100 * cos(RAD(player->angle)) * delta_time;
-    player->position.y += 100 * sin(RAD(player->angle)) * delta_time;
+    player->position.x += 350 * cos(RAD(player->angle)) * delta_time;
+    player->position.y += 350 * sin(RAD(player->angle)) * delta_time;
   }
   if (player->directions[eLeft]) {
-    player->angle -= 150 * delta_time;
+    player->angle -= 7.50;
   }
   if (player->directions[eRight]) {
-    player->angle += 150 * delta_time;
+    player->angle += 7.50;
   }
 }
 
