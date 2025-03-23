@@ -1,11 +1,9 @@
 #include <SDL2/SDL_image.h>
-#include <SDL_ttf.h>
 #include <game.h>
-#include <player.h>
 #include <stdio.h>
 #include <utils.h>
 
-bool initialize_game(game_t *game) {
+int initialize_game(game_t *game) {
   // initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     fprintf(stderr, "error: cannot initialize SDL: %s\n", SDL_GetError());
@@ -50,6 +48,8 @@ bool initialize_game(game_t *game) {
   game->start_screen =
       load_from_rendered_text(game->renderer, game->font, "START");
 
+  game->tick_count = 0;
+
   return START;
 }
 
@@ -75,9 +75,23 @@ void render(game_t *game) {
   } else if (game->state == RUNNING) {
     player_render(&game->player, game->renderer);
   }
+
   SDL_RenderPresent(game->renderer);
 }
-void update(game_t *game) { player_update(&game->player); }
+
+void update(game_t *game) {
+  // Wait until 16ms has elapsed since last frame
+  while (!SDL_TICKS_PASSED(SDL_GetTicks(), game->tick_count + 16))
+    ;
+  // delta time is the difference in ticks from the last frame (seconds)
+  float delta_time = (SDL_GetTicks() - game->tick_count) / 1000.0f;
+  // Clamp maximum delta time value
+  if (delta_time > 0.05f) {
+    delta_time = 0.05f;
+  }
+  game->tick_count = SDL_GetTicks();
+  player_update(&game->player, delta_time);
+}
 
 void quit_game(game_t *game) {
   if (game->window) {

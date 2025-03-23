@@ -65,19 +65,16 @@ void player_handle_event(player_t *player, SDL_Event *event) {
   }
 }
 
-void player_update(player_t *player) {
+void player_update(player_t *player, float delta_time) {
   if (player->directions[eUp]) {
-
-    float radian_angle = (M_PI * player->angle) / 180;
-
-    player->position.x += 10 * cos(radian_angle);
-    player->position.y += 10 * sin(radian_angle);
+    player->position.x += 100 * cos(RAD(player->angle)) * delta_time;
+    player->position.y += 100 * sin(RAD(player->angle)) * delta_time;
   }
   if (player->directions[eLeft]) {
-    player->angle -= 15;
+    player->angle -= 150 * delta_time;
   }
   if (player->directions[eRight]) {
-    player->angle += 15;
+    player->angle += 150 * delta_time;
   }
 }
 

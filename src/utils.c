@@ -1,6 +1,6 @@
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
 #include <stdio.h>
+#include <utils.h>
 
 SDL_Texture *load_texture(SDL_Renderer *renderer, const char *path) {
   SDL_Texture *texture = NULL;

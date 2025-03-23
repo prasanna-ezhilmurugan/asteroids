@@ -6,7 +6,7 @@
 #include <player.h>
 #include <stdbool.h>
 
-enum game_state { START, RUNNING, QUIT, GAME_STATES };
+enum game_state { START, RUNNING, QUIT };
 
 typedef struct {
   // rendering
@@ -19,9 +19,12 @@ typedef struct {
 
   // state
   int state;
+
+  // time
+  float tick_count;
 } game_t;
 
-bool initialize_game(game_t *game);
+int initialize_game(game_t *game);
 void quit_game(game_t *game);
 
 void handle_event(game_t *game);
