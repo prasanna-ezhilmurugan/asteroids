@@ -93,18 +93,20 @@ void player_update(player_t *player, float delta_time) {
   }
 
   // bullet update and bounding the bullet
-  for (size_t i = 0; i < BULLET_COUNT && player->bullets[i].alive; i++) {
-    player->bullets[i].position.x +=
-        BULLET_VELOCITY * cos(RAD(player->bullets[i].angle)) * delta_time;
-    player->bullets[i].position.y +=
-        BULLET_VELOCITY * sin(RAD(player->bullets[i].angle)) * delta_time;
-    if (player->bullets[i].position.x < 0 ||
-        player->bullets[i].position.x >= WINDOW_WIDTH) {
-      player->bullets[i].alive = false;
-    }
-    if (player->bullets[i].position.y < 0 ||
-        player->bullets[i].position.y >= WINDOW_HEIGHT) {
-      player->bullets[i].alive = false;
+  for (size_t i = 0; i < BULLET_COUNT; i++) {
+    if (player->bullets[i].alive) {
+      player->bullets[i].position.x +=
+          BULLET_VELOCITY * cos(RAD(player->bullets[i].angle)) * delta_time;
+      player->bullets[i].position.y +=
+          BULLET_VELOCITY * sin(RAD(player->bullets[i].angle)) * delta_time;
+      if (player->bullets[i].position.x < 0 ||
+          player->bullets[i].position.x >= WINDOW_WIDTH) {
+        player->bullets[i].alive = false;
+      }
+      if (player->bullets[i].position.y < 0 ||
+          player->bullets[i].position.y >= WINDOW_HEIGHT) {
+        player->bullets[i].alive = false;
+      }
     }
   }
 }
@@ -119,7 +121,6 @@ void player_shoot_bullets(player_t *player) {
           player->position.x + player->position.w / 3;
       player->bullets[i].position.y =
           player->position.y + player->position.h / 3;
-      printf("%ld\t", i);
       break;
     }
   }

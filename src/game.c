@@ -4,23 +4,23 @@
 #include <utils.h>
 
 int initialize_game(game_t *game) {
-  // initialize SDL
+  /* Initialize SDL */
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     fprintf(stderr, "error: cannot initialize SDL: %s\n", SDL_GetError());
     return false;
   }
-  // initialize SDL_Image
+  /* Initialize SDL_Image */
   if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
     fprintf(stderr, "error: cannot initialize SDL image: %s\n", IMG_GetError());
     return false;
   }
-  // initialize TTF_Font
+  /* Initialize TTF_Font */
   if (TTF_Init() != 0) {
     fprintf(stderr, "error: cannot initialize SDL font: %s", TTF_GetError());
     return false;
   }
 
-  // create window or throw
+  /* Create window or throw */
   game->window = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_CENTERED,
                                   SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH,
                                   WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
@@ -29,7 +29,7 @@ int initialize_game(game_t *game) {
     return false;
   }
 
-  // create renderer or throw
+  /* Create renderer or throw */
   game->renderer = SDL_CreateRenderer(
       game->window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   if (!game->renderer) {
@@ -37,6 +37,7 @@ int initialize_game(game_t *game) {
     return false;
   }
 
+  /* Create font or throw */
   game->font =
       TTF_OpenFont("assets/fonts/JetBrainsMonoNLNerdFont-Bold.ttf", 28);
   if (!game->font) {
@@ -46,12 +47,15 @@ int initialize_game(game_t *game) {
 
   game->player = player_create(game->renderer);
   asteroid_init(game->renderer);
-  game->asteroid = asteroid_create();
+  for (size_t i = 0; i < ASTEROID_COUNT; i++) {
+    game->asteroids[i] = asteroid_create();
+  }
   game->start_screen =
       load_from_rendered_text(game->renderer, game->font, "START");
   game->over_screen =
       load_from_rendered_text(game->renderer, game->font, "OVER");
 
+  game->life = 3;
   game->tick_count = 0;
 
   return START;
@@ -60,13 +64,14 @@ int initialize_game(game_t *game) {
 void handle_event(game_t *game) {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
-    if (game->state == START && event.type == SDL_MOUSEBUTTONDOWN) {
-      game->state = RUNNING;
-    }
     if (event.type == SDL_QUIT) {
       game->state = QUIT;
     }
-    player_handle_event(&game->player, &event);
+    if (game->state == START && event.type == SDL_MOUSEBUTTONDOWN) {
+      game->state = RUNNING;
+    } else {
+      player_handle_event(&game->player, &event);
+    }
   }
 }
 
@@ -78,7 +83,11 @@ void render(game_t *game) {
     SDL_RenderCopy(game->renderer, game->start_screen, NULL, NULL);
   } else if (game->state == RUNNING) {
     player_render(&game->player, game->renderer);
-    asteroid_render(&game->asteroid, game->renderer);
+    for (size_t i = 0; i < ASTEROID_COUNT; i++) {
+      if (game->asteroids[i].alive) {
+        asteroid_render(&game->asteroids[i], game->renderer);
+      }
+    }
   } else if (game->state == OVER) {
     SDL_RenderCopy(game->renderer, game->over_screen, NULL, NULL);
   }
@@ -87,21 +96,28 @@ void render(game_t *game) {
 }
 
 void update(game_t *game) {
-  // Wait until 16ms has elapsed since last frame
+  /* Wait until 16ms has elapsed since last frame */
   while (!SDL_TICKS_PASSED(SDL_GetTicks(), game->tick_count + 16))
     ;
-  // delta time is the difference in ticks from the last frame (seconds)
+  /* Delta time is the difference in ticks from the last frame (seconds) */
   float delta_time = (SDL_GetTicks() - game->tick_count) / 1000.0f;
   game->tick_count = SDL_GetTicks();
-  // Clamp maximum delta time value
+  /* Clamp maximum delta time value */
   if (delta_time > 0.05f) {
     delta_time = 0.05f;
   }
 
   player_update(&game->player, delta_time);
-  asteroid_update(&game->asteroid, delta_time);
-  if (detect_collision(game->player.position, game->asteroid.position)) {
-    game->state = OVER;
+  for (size_t i = 0; i < ASTEROID_COUNT; i++) {
+    asteroid_update(&game->asteroids[i], delta_time);
+    if (detect_collision(game->player.position, game->asteroids[i].position)) {
+      if (game->life == 0) {
+        game->state = OVER;
+      } else {
+        game->life--;
+        // go back to initial state
+      }
+    }
   }
 }
 

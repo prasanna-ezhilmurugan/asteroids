@@ -1,4 +1,6 @@
 #include <asteroids.h>
+#include <stdlib.h>
+#include <time.h>
 
 void asteroid_init(SDL_Renderer *renderer) {
   asteroid_texture[ASTEROID_SIZE_BIG] =
@@ -7,17 +9,18 @@ void asteroid_init(SDL_Renderer *renderer) {
       load_texture(renderer, "assets/sprites/asteroid_medium.png");
   asteroid_texture[ASTEROID_SIZE_SMALL] =
       load_texture(renderer, "assets/sprites/asteroid_small.png");
+  srand(time(NULL));
 }
 
 asteroid_t asteroid_create() {
   asteroid_t asteroid;
-
-  asteroid.size = ASTEROID_SIZE_SMALL;
+  asteroid.alive = true;
+  asteroid.size = ASTEROID_SIZE_BIG;
   asteroid.angle = 0.0;
-  asteroid.texture = asteroid_texture[asteroid.size];
+  asteroid.texture = asteroid_texture[rand() % 3];
   asteroid.position = get_rect(asteroid.texture);
-  asteroid.position.x = 0;
-  asteroid.position.y = 0;
+  asteroid.position.x = rand() % WINDOW_WIDTH;
+  asteroid.position.y = rand() % WINDOW_HEIGHT;
 
   return asteroid;
 }
@@ -30,6 +33,12 @@ void asteroid_render(asteroid_t *asteroid, SDL_Renderer *renderer) {
 void asteroid_update(asteroid_t *asteroid, float delta_time) {
   asteroid->position.x += 100.0f * delta_time;
   asteroid->position.y += 100.0f * delta_time;
+  if (asteroid->position.x < 0 || asteroid->position.x > WINDOW_WIDTH) {
+    asteroid->alive = false;
+  }
+  if (asteroid->position.y < 0 || asteroid->position.y > WINDOW_HEIGHT) {
+    asteroid->alive = false;
+  }
   asteroid->angle += 15 * delta_time;
 }
 

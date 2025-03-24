@@ -7,7 +7,7 @@
 #include <player.h>
 #include <stdbool.h>
 
-enum game_state { START, RUNNING, OVER, QUIT };
+typedef enum { START, RUNNING, OVER, QUIT } game_state;
 
 typedef struct {
   // rendering
@@ -15,13 +15,17 @@ typedef struct {
   SDL_Renderer *renderer;
   TTF_Font *font;
 
+  // components
   player_t player;
-  asteroid_t asteroid;
+  asteroid_t asteroids[ASTEROID_COUNT];
+
+  // Textures
   SDL_Texture *start_screen;
   SDL_Texture *over_screen;
 
   // state
-  int state;
+  int life;
+  game_state state;
 
   // time
   float tick_count;

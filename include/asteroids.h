@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <utils.h>
 
+#define ASTEROID_COUNT 5
 #define ASTEROID_TEXTURES 3
 
 typedef enum {
@@ -15,6 +16,7 @@ typedef enum {
 static SDL_Texture *asteroid_texture[ASTEROID_TEXTURES] = {NULL};
 
 typedef struct {
+  bool alive;
   asteroid_size size;
   double angle;
   SDL_Rect position;
