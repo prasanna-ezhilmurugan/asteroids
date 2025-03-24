@@ -44,8 +44,9 @@ int initialize_game(game_t *game) {
     return false;
   }
 
-  game->player = player_create(game->renderer, "assets/sprites/player.png");
-  game->asteroid = asteroid_create(game->renderer);
+  game->player = player_create(game->renderer);
+  asteroid_init(game->renderer);
+  game->asteroid = asteroid_create();
   game->start_screen =
       load_from_rendered_text(game->renderer, game->font, "START");
   game->over_screen =
@@ -117,6 +118,11 @@ void quit_game(game_t *game) {
     SDL_DestroyTexture(game->start_screen);
     game->start_screen = NULL;
   }
+  if (game->over_screen) {
+    SDL_DestroyTexture(game->over_screen);
+    game->over_screen = NULL;
+  }
   player_destroy(&game->player);
+  asteroid_destroy();
   SDL_Quit();
 }
