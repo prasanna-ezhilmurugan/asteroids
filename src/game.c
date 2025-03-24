@@ -45,8 +45,11 @@ int initialize_game(game_t *game) {
   }
 
   game->player = player_create(game->renderer, "assets/sprites/player.png");
+  game->asteroid = asteroid_create(game->renderer);
   game->start_screen =
       load_from_rendered_text(game->renderer, game->font, "START");
+  game->over_screen =
+      load_from_rendered_text(game->renderer, game->font, "OVER");
 
   game->tick_count = 0;
 
@@ -74,6 +77,9 @@ void render(game_t *game) {
     SDL_RenderCopy(game->renderer, game->start_screen, NULL, NULL);
   } else if (game->state == RUNNING) {
     player_render(&game->player, game->renderer);
+    asteroid_render(&game->asteroid, game->renderer);
+  } else if (game->state == OVER) {
+    SDL_RenderCopy(game->renderer, game->over_screen, NULL, NULL);
   }
 
   SDL_RenderPresent(game->renderer);
@@ -85,12 +91,17 @@ void update(game_t *game) {
     ;
   // delta time is the difference in ticks from the last frame (seconds)
   float delta_time = (SDL_GetTicks() - game->tick_count) / 1000.0f;
+  game->tick_count = SDL_GetTicks();
   // Clamp maximum delta time value
   if (delta_time > 0.05f) {
     delta_time = 0.05f;
   }
-  game->tick_count = SDL_GetTicks();
+
   player_update(&game->player, delta_time);
+  asteroid_update(&game->asteroid, delta_time);
+  if (detect_collision(game->player.position, game->asteroid.position)) {
+    game->state = OVER;
+  }
 }
 
 void quit_game(game_t *game) {

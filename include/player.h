@@ -4,7 +4,7 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
-enum PlayerDirection { eUp, eDown, eLeft, eRight, eNumDirections };
+enum player_directions { eUp, eDown, eLeft, eRight, eNumDirections };
 
 typedef struct {
   SDL_Texture *texture;

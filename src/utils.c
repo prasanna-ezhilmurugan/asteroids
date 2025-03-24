@@ -18,6 +18,16 @@ SDL_Texture *load_texture(SDL_Renderer *renderer, const char *path) {
   }
   return texture;
 }
+SDL_Rect get_rect(SDL_Texture *texture) {
+  SDL_Rect position = {0};
+  int texture_width = 0, texture_height = 0;
+  SDL_QueryTexture(texture, NULL, NULL, &texture_width, &texture_height);
+  position = (SDL_Rect){.x = (WINDOW_WIDTH - texture_width) / 2,
+                        .y = (WINDOW_HEIGHT - texture_height) / 2,
+                        texture_width,
+                        texture_height};
+  return position;
+}
 
 SDL_Texture *load_from_rendered_text(SDL_Renderer *renderer, TTF_Font *font,
                                      const char *string) {
@@ -39,4 +49,32 @@ SDL_Texture *load_from_rendered_text(SDL_Renderer *renderer, TTF_Font *font,
     SDL_FreeSurface(surface);
   }
   return texture;
+}
+
+bool detect_collision(SDL_Rect A, SDL_Rect B) {
+
+  int left_A = A.x;
+  int right_A = A.x + A.w;
+  int top_A = A.y;
+  int bottom_A = A.y + A.h;
+
+  int left_B = B.x;
+  int right_B = B.x + B.w;
+  int top_B = B.y;
+  int bottom_B = B.y + B.h;
+
+  if (bottom_A < top_B) {
+    return false;
+  }
+  if (top_A >= bottom_B) {
+    return false;
+  }
+  if (right_A <= left_B) {
+    return false;
+  }
+  if (left_A >= right_B) {
+    return false;
+  }
+
+  return true;
 }

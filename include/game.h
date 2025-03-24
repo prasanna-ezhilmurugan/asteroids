@@ -3,10 +3,11 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <asteroids.h>
 #include <player.h>
 #include <stdbool.h>
 
-enum game_state { START, RUNNING, QUIT };
+enum game_state { START, RUNNING, OVER, QUIT };
 
 typedef struct {
   // rendering
@@ -15,7 +16,9 @@ typedef struct {
   TTF_Font *font;
 
   player_t player;
+  asteroid_t asteroid;
   SDL_Texture *start_screen;
+  SDL_Texture *over_screen;
 
   // state
   int state;

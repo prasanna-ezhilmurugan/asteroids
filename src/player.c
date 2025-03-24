@@ -16,12 +16,15 @@ player_t player_create(SDL_Renderer *renderer, const char *path) {
   // player.dy = 0;
 
   // position and size of the texture
-  int texture_width = 0, texture_height = 0;
-  SDL_QueryTexture(player.texture, NULL, NULL, &texture_width, &texture_height);
-  player.position = (SDL_Rect){.x = (WINDOW_WIDTH - texture_width) / 2,
-                               .y = (WINDOW_HEIGHT - texture_height) / 2,
-                               texture_width,
-                               texture_height};
+  /* int texture_width = 0, texture_height = 0; */
+  /* SDL_QueryTexture(player.texture, NULL, NULL, &texture_width,
+   * &texture_height); */
+  /* player.position = (SDL_Rect){.x = (WINDOW_WIDTH - texture_width) / 2, */
+  /*                              .y = (WINDOW_HEIGHT - texture_height) / 2, */
+  /*                              texture_width, */
+  /*                              texture_height}; */
+
+  player.position = get_rect(player.texture);
 
   player.angle = 0;
 
