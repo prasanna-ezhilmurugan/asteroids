@@ -5,8 +5,11 @@
 #include <stdbool.h>
 
 #define PLAYER_SPRITE_PATH "assets/sprites/player.png"
+#define PLAYER_VELOCITY 350
+#define PLAYER_TURN_ANGLE 7.5
 #define BULLET_SPRITE_PATH "assets/sprites/bullet.png"
-#define BULLET_VELOCITY 10
+#define BULLET_COUNT 3
+#define BULLET_VELOCITY 500
 
 enum player_directions { eUp, eDown, eLeft, eRight, eNumDirections };
 
@@ -23,7 +26,7 @@ typedef struct {
   float angle;
 
   SDL_Rect position;
-  bullet_t bullet;
+  bullet_t bullets[BULLET_COUNT];
   bool directions[eNumDirections];
 } player_t;
 
