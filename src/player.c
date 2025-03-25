@@ -6,8 +6,10 @@
 
 player_t player_create(SDL_Renderer *renderer) {
   player_t player = {};
-  player.texture = load_texture(renderer, PLAYER_SPRITE_PATH);
-  player.position = get_rect(player.texture);
+  player.texture_idle = load_texture(renderer, PLAYER_IDLE_SPRITE_PATH);
+  player.texture_thrusting =
+      load_texture(renderer, PLAYER_THRUSTING_SPRITE_PATH);
+  player.position = get_rect(player.texture_idle);
   player.bullet_texture = load_texture(renderer, BULLET_SPRITE_PATH);
 
   player.angle = 0;
@@ -19,8 +21,13 @@ player_t player_create(SDL_Renderer *renderer) {
 }
 
 void player_render(player_t *player, SDL_Renderer *renderer) {
-  SDL_RenderCopyEx(renderer, player->texture, NULL, &player->position,
-                   player->angle, NULL, SDL_FLIP_NONE);
+  if (player->directions[eUp]) {
+    SDL_RenderCopyEx(renderer, player->texture_thrusting, NULL,
+                     &player->position, player->angle, NULL, SDL_FLIP_NONE);
+  } else {
+    SDL_RenderCopyEx(renderer, player->texture_idle, NULL, &player->position,
+                     player->angle, NULL, SDL_FLIP_NONE);
+  }
   for (size_t i = 0; i < BULLET_COUNT; i++) {
     if (player->bullets[i].alive) {
       SDL_RenderCopy(renderer, player->bullet_texture, NULL,
@@ -65,11 +72,15 @@ void player_handle_event(player_t *player, SDL_Event *event) {
 }
 
 void player_update(player_t *player, float delta_time) {
+  /* Updating position and adding thrusting force */
+  player->position.x += player->velocity * cos(RAD(player->angle)) * delta_time;
+  player->position.y += player->velocity * sin(RAD(player->angle)) * delta_time;
   if (player->directions[eUp]) {
-    player->position.x +=
-        PLAYER_VELOCITY * cos(RAD(player->angle)) * delta_time;
-    player->position.y +=
-        PLAYER_VELOCITY * sin(RAD(player->angle)) * delta_time;
+    player->velocity += PLAYER_ACCELERATION * delta_time;
+  } else {
+    if (player->velocity > 0) {
+      player->velocity -= PLAYER_ACCELERATION * delta_time;
+    }
   }
   if (player->directions[eLeft]) {
     player->angle -= PLAYER_TURN_ANGLE;
@@ -126,8 +137,11 @@ void player_shoot_bullets(player_t *player) {
   }
 }
 void player_destroy(player_t *player) {
-  if (player->texture) {
-    SDL_DestroyTexture(player->texture);
+  if (player->texture_idle) {
+    SDL_DestroyTexture(player->texture_idle);
+  }
+  if (player->texture_thrusting) {
+    SDL_DestroyTexture(player->texture_thrusting);
   }
   if (player->bullet_texture) {
     SDL_DestroyTexture(player->bullet_texture);

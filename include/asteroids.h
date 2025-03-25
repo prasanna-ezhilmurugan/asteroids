@@ -24,6 +24,7 @@ typedef struct {
 } asteroid_t;
 
 void asteroid_init(SDL_Renderer *renderer);
+SDL_Rect asteroid_generate_position();
 asteroid_t asteroid_create();
 void asteroid_render(asteroid_t *asteroid, SDL_Renderer *renderer);
 void asteroid_update(asteroid_t *asteroid, float delta_time);

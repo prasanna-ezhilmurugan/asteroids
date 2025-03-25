@@ -4,8 +4,9 @@
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 
-#define PLAYER_SPRITE_PATH "assets/sprites/player.png"
-#define PLAYER_VELOCITY 350
+#define PLAYER_IDLE_SPRITE_PATH "assets/sprites/player_idle.png"
+#define PLAYER_THRUSTING_SPRITE_PATH "assets/sprites/player_thrusting.png"
+#define PLAYER_ACCELERATION 300
 #define PLAYER_TURN_ANGLE 7.5
 #define BULLET_SPRITE_PATH "assets/sprites/bullet.png"
 #define BULLET_COUNT 5
@@ -20,10 +21,12 @@ typedef struct {
 } bullet_t;
 
 typedef struct {
-  SDL_Texture *texture;
+  SDL_Texture *texture_idle;
+  SDL_Texture *texture_thrusting;
   SDL_Texture *bullet_texture;
   // props
   float angle;
+  float velocity;
 
   SDL_Rect position;
   bullet_t bullets[BULLET_COUNT];

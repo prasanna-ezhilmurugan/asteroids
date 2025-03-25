@@ -118,6 +118,9 @@ void update(game_t *game) {
         // go back to initial state
       }
     }
+    if (!game->asteroids[i].alive) {
+      game->asteroids[i] = asteroid_create();
+    }
   }
 }
 
