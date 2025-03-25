@@ -29,6 +29,7 @@ typedef struct {
   SDL_Texture *score_texture;
   SDL_Rect score_rect;
   int score;
+  char score_string[20];
 
   // state
   int life;

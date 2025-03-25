@@ -7,7 +7,8 @@ int main() {
   while (game.state != QUIT) {
     handle_event(&game);
     render(&game);
-    update(&game);
+    if (game.state == RUNNING)
+      update(&game);
   }
   quit_game(&game);
   return 0;

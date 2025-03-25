@@ -1,6 +1,8 @@
 #include <SDL2/SDL_image.h>
 #include <game.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <strings.h>
 #include <utils.h>
 
 int initialize_game(game_t *game) {
@@ -49,6 +51,8 @@ int initialize_game(game_t *game) {
   game->tick_count = 0;
   game->score = 0;
 
+  sprintf(game->score_string, "SCORE: %d ", game->score);
+
   game->player = player_create(game->renderer);
 
   asteroid_init(game->renderer);
@@ -65,7 +69,7 @@ int initialize_game(game_t *game) {
   game->over_screen_rect = get_rect(game->over_screen_texture);
 
   game->score_texture =
-      load_from_rendered_text(game->renderer, game->font, "SCORE: ");
+      load_from_rendered_text(game->renderer, game->font, game->score_string);
   game->score_rect = get_rect(game->score_texture);
   game->score_rect.x = WINDOW_WIDTH - game->score_rect.w;
   game->score_rect.y = 0;
@@ -124,6 +128,7 @@ void update(game_t *game) {
   }
 
   player_update(&game->player, delta_time);
+
   for (size_t i = 0; i < ASTEROID_COUNT; i++) {
     asteroid_update(&game->asteroids[i], delta_time);
     if (detect_collision(game->player.position, game->asteroids[i].position)) {
@@ -137,7 +142,22 @@ void update(game_t *game) {
     if (!game->asteroids[i].alive) {
       game->asteroids[i] = asteroid_create();
     }
+    for (size_t j = 0; j < BULLET_COUNT; j++) {
+      if (detect_collision(game->player.bullets[i].position,
+                           game->asteroids[i].position)) {
+        game->asteroids[i].point--;
+      }
+      if (game->asteroids[i].point == 0) {
+        game->asteroids[i].alive = false;
+      }
+    }
   }
+
+  /* Score update */
+  game->score++;
+  sprintf(game->score_string, "SCORE: %d ", game->score);
+  game->score_texture =
+      load_from_rendered_text(game->renderer, game->font, game->score_string);
 }
 
 void quit_game(game_t *game) {

@@ -5,22 +5,24 @@
 #include <utils.h>
 
 #define ASTEROID_COUNT 5
-#define ASTEROID_TEXTURES 3
+#define ASTEROID_VARIANTS 3
 
 typedef enum {
-  ASTEROID_SIZE_BIG,
-  ASTEROID_SIZE_MEDIUM,
   ASTEROID_SIZE_SMALL,
+  ASTEROID_SIZE_MEDIUM,
+  ASTEROID_SIZE_BIG,
 } asteroid_size;
 
-static SDL_Texture *asteroid_texture[ASTEROID_TEXTURES] = {NULL};
+extern SDL_Texture *asteroid_texture[ASTEROID_VARIANTS];
+extern float asteroid_points[ASTEROID_VARIANTS];
 
 typedef struct {
   bool alive;
-  asteroid_size size;
   double angle;
-  SDL_Rect position;
+  asteroid_size size;
   SDL_Texture *texture;
+  SDL_Rect position;
+  float point;
 } asteroid_t;
 
 void asteroid_init(SDL_Renderer *renderer);

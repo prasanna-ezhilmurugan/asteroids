@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <time.h>
 
+SDL_Texture *asteroid_texture[ASTEROID_VARIANTS] = {0};
+float asteroid_point[ASTEROID_VARIANTS] = {1, 2, 3};
+
 void asteroid_init(SDL_Renderer *renderer) {
   asteroid_texture[ASTEROID_SIZE_BIG] =
       load_texture(renderer, "assets/sprites/asteroid_big.png");
@@ -14,11 +17,15 @@ void asteroid_init(SDL_Renderer *renderer) {
 
 asteroid_t asteroid_create() {
   asteroid_t asteroid;
+
   asteroid.alive = true;
-  asteroid.size = ASTEROID_SIZE_BIG;
   asteroid.angle = 0.0;
-  asteroid.texture = asteroid_texture[rand() % 3];
+  asteroid.size = rand() % ASTEROID_VARIANTS;
+
+  asteroid.texture = asteroid_texture[asteroid.size];
   asteroid.position = get_rect(asteroid.texture);
+
+  asteroid.point = asteroid_point[asteroid.size];
 
   if (rand() % 2 == 0) {
     asteroid.position.x = 0;
@@ -49,7 +56,7 @@ void asteroid_update(asteroid_t *asteroid, float delta_time) {
 }
 
 void asteroid_destroy() {
-  for (size_t i = 0; i < ASTEROID_TEXTURES; i++) {
+  for (size_t i = 0; i < ASTEROID_VARIANTS; i++) {
     if (asteroid_texture[0]) {
       SDL_DestroyTexture(asteroid_texture[i]);
       asteroid_texture[i] = NULL;
