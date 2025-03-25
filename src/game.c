@@ -39,24 +39,36 @@ int initialize_game(game_t *game) {
 
   /* Create font or throw */
   game->font =
-      TTF_OpenFont("assets/fonts/JetBrainsMonoNLNerdFont-Bold.ttf", 28);
+      TTF_OpenFont("assets/fonts/JetBrainsMonoNLNerdFont-Bold.ttf", 48);
   if (!game->font) {
     fprintf(stderr, "error: cannot create SDL font: %s", TTF_GetError());
     return false;
   }
 
+  game->life = 1;
+  game->tick_count = 0;
+  game->score = 0;
+
   game->player = player_create(game->renderer);
+
   asteroid_init(game->renderer);
   for (size_t i = 0; i < ASTEROID_COUNT; i++) {
     game->asteroids[i] = asteroid_create();
   }
-  game->start_screen =
-      load_from_rendered_text(game->renderer, game->font, "START");
-  game->over_screen =
-      load_from_rendered_text(game->renderer, game->font, "OVER");
 
-  game->life = 3;
-  game->tick_count = 0;
+  game->start_screen_texture =
+      load_from_rendered_text(game->renderer, game->font, "START GAME");
+  game->start_screen_rect = get_rect(game->start_screen_texture);
+
+  game->over_screen_texture =
+      load_from_rendered_text(game->renderer, game->font, "GAME OVER");
+  game->over_screen_rect = get_rect(game->over_screen_texture);
+
+  game->score_texture =
+      load_from_rendered_text(game->renderer, game->font, "SCORE: ");
+  game->score_rect = get_rect(game->score_texture);
+  game->score_rect.x = WINDOW_WIDTH - game->score_rect.w;
+  game->score_rect.y = 0;
 
   return START;
 }
@@ -80,7 +92,8 @@ void render(game_t *game) {
   SDL_RenderClear(game->renderer);
 
   if (game->state == START) {
-    SDL_RenderCopy(game->renderer, game->start_screen, NULL, NULL);
+    SDL_RenderCopy(game->renderer, game->start_screen_texture, NULL,
+                   &game->start_screen_rect);
   } else if (game->state == RUNNING) {
     player_render(&game->player, game->renderer);
     for (size_t i = 0; i < ASTEROID_COUNT; i++) {
@@ -88,8 +101,11 @@ void render(game_t *game) {
         asteroid_render(&game->asteroids[i], game->renderer);
       }
     }
+    SDL_RenderCopy(game->renderer, game->score_texture, NULL,
+                   &game->score_rect);
   } else if (game->state == OVER) {
-    SDL_RenderCopy(game->renderer, game->over_screen, NULL, NULL);
+    SDL_RenderCopy(game->renderer, game->over_screen_texture, NULL,
+                   &game->over_screen_rect);
   }
 
   SDL_RenderPresent(game->renderer);
@@ -133,13 +149,17 @@ void quit_game(game_t *game) {
     SDL_DestroyRenderer(game->renderer);
     game->renderer = NULL;
   }
-  if (game->start_screen) {
-    SDL_DestroyTexture(game->start_screen);
-    game->start_screen = NULL;
+  if (game->start_screen_texture) {
+    SDL_DestroyTexture(game->start_screen_texture);
+    game->start_screen_texture = NULL;
   }
-  if (game->over_screen) {
-    SDL_DestroyTexture(game->over_screen);
-    game->over_screen = NULL;
+  if (game->over_screen_texture) {
+    SDL_DestroyTexture(game->over_screen_texture);
+    game->over_screen_texture = NULL;
+  }
+  if (game->score_texture) {
+    SDL_DestroyTexture(game->score_texture);
+    game->score_texture = NULL;
   }
   player_destroy(&game->player);
   asteroid_destroy();

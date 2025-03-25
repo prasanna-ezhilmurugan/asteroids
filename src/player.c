@@ -76,7 +76,9 @@ void player_update(player_t *player, float delta_time) {
   player->position.x += player->velocity * cos(RAD(player->angle)) * delta_time;
   player->position.y += player->velocity * sin(RAD(player->angle)) * delta_time;
   if (player->directions[eUp]) {
-    player->velocity += PLAYER_ACCELERATION * delta_time;
+    if (player->velocity < PLAYER_MAX_VELOCITY) {
+      player->velocity += PLAYER_ACCELERATION * delta_time;
+    }
   } else {
     if (player->velocity > 0) {
       player->velocity -= PLAYER_ACCELERATION * delta_time;

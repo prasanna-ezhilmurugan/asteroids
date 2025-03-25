@@ -19,8 +19,14 @@ asteroid_t asteroid_create() {
   asteroid.angle = 0.0;
   asteroid.texture = asteroid_texture[rand() % 3];
   asteroid.position = get_rect(asteroid.texture);
-  asteroid.position.x = rand() % WINDOW_WIDTH;
-  asteroid.position.y = rand() % WINDOW_HEIGHT;
+
+  if (rand() % 2 == 0) {
+    asteroid.position.x = 0;
+    asteroid.position.y = rand() % WINDOW_HEIGHT;
+  } else {
+    asteroid.position.x = rand() % WINDOW_WIDTH;
+    asteroid.position.y = 0;
+  }
 
   return asteroid;
 }

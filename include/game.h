@@ -20,8 +20,15 @@ typedef struct {
   asteroid_t asteroids[ASTEROID_COUNT];
 
   // Textures
-  SDL_Texture *start_screen;
-  SDL_Texture *over_screen;
+  SDL_Texture *start_screen_texture;
+  SDL_Rect start_screen_rect;
+  SDL_Texture *over_screen_texture;
+  SDL_Rect over_screen_rect;
+
+  // score
+  SDL_Texture *score_texture;
+  SDL_Rect score_rect;
+  int score;
 
   // state
   int life;

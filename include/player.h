@@ -6,6 +6,7 @@
 
 #define PLAYER_IDLE_SPRITE_PATH "assets/sprites/player_idle.png"
 #define PLAYER_THRUSTING_SPRITE_PATH "assets/sprites/player_thrusting.png"
+#define PLAYER_MAX_VELOCITY 400
 #define PLAYER_ACCELERATION 300
 #define PLAYER_TURN_ANGLE 7.5
 #define BULLET_SPRITE_PATH "assets/sprites/bullet.png"
