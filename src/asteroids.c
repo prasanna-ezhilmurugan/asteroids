@@ -31,7 +31,7 @@ asteroid_t asteroid_create() {
   case 0:
     asteroid.position.x = 0;
     asteroid.position.y = rand() % WINDOW_HEIGHT;
-    asteroid.angle = (rand() % (270 - 90 + 1)) + 90;
+    asteroid.angle = (rand() % (90 - (-90) + 1)) - 90;
     break;
   case 1:
     asteroid.position.x = rand() % WINDOW_WIDTH;
@@ -41,12 +41,12 @@ asteroid_t asteroid_create() {
   case 2:
     asteroid.position.x = WINDOW_WIDTH;
     asteroid.position.y = rand() % WINDOW_HEIGHT;
-    asteroid.angle = (rand() % (450 - 270 + 1)) + 270;
+    asteroid.angle = (rand() % (270 - 90 + 1)) + 90;
     break;
-  case 4:
+  case 3:
     asteroid.position.x = rand() % WINDOW_WIDTH;
     asteroid.position.y = WINDOW_HEIGHT;
-    asteroid.angle = (rand() % (360 - 180 + 1)) + 180;
+    asteroid.angle = -1 * ((rand() % (180 - 0 + 1)) + 0);
     break;
   }
 

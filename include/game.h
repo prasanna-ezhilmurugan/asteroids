@@ -7,7 +7,7 @@
 #include <player.h>
 #include <stdbool.h>
 
-typedef enum { START, RUNNING, OVER, RESTART, QUIT } game_state;
+typedef enum { START, RUNNING, OVER, QUIT } game_state;
 
 typedef struct {
   // rendering

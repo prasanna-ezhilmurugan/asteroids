@@ -9,15 +9,13 @@ int main() {
     return EXIT_FAILURE;
   }
 
-  do {
-    init_game(&game);
-    while (game.state != QUIT) {
-      handle_event(&game);
-      render(&game);
-      if (game.state == RUNNING)
-        update(&game);
-    }
-  } while (game.state == RESTART);
+  init_game(&game);
+  while (game.state != QUIT) {
+    handle_event(&game);
+    render(&game);
+    if (game.state == RUNNING)
+      update(&game);
+  }
 
   quit_game(&game);
   return 0;

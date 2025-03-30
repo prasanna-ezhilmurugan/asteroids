@@ -58,11 +58,11 @@ bool load_game(game_t *game) {
   game->score_rect.x = WINDOW_WIDTH - game->score_rect.w;
   game->score_rect.y = 0;
 
+  game->life = 1;
   return true;
 }
 
 void init_game(game_t *game) {
-  game->life = 1;
   game->tick_count = 0;
   game->score = 0;
   sprintf(game->score_string, "SCORE: %d ", game->score);
@@ -87,14 +87,9 @@ void handle_event(game_t *game) {
     case SDL_MOUSEBUTTONDOWN:
       if (game->state == START) {
         game->state = RUNNING;
-      } else if (game->state == OVER) {
-        game->state = RESTART;
       }
       break;
     default:
-      if (game->state == RESTART) {
-        game->state = RUNNING;
-      }
       player_handle_event(&game->player, &event);
     }
   }
