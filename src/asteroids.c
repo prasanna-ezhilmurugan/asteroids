@@ -19,7 +19,7 @@ asteroid_t asteroid_create() {
   asteroid_t asteroid;
 
   asteroid.alive = true;
-  asteroid.angle = 0.0;
+  asteroid.axis_angle = 0.0;
   asteroid.size = rand() % ASTEROID_VARIANTS;
 
   asteroid.texture = asteroid_texture[asteroid.size];
@@ -27,12 +27,27 @@ asteroid_t asteroid_create() {
 
   asteroid.point = asteroid_point[asteroid.size];
 
-  if (rand() % 2 == 0) {
+  switch (rand() % 4) {
+  case 0:
     asteroid.position.x = 0;
     asteroid.position.y = rand() % WINDOW_HEIGHT;
-  } else {
+    asteroid.angle = (rand() % (270 - 90 + 1)) + 90;
+    break;
+  case 1:
     asteroid.position.x = rand() % WINDOW_WIDTH;
     asteroid.position.y = 0;
+    asteroid.angle = (rand() % (180 - 0 + 1)) + 0;
+    break;
+  case 2:
+    asteroid.position.x = WINDOW_WIDTH;
+    asteroid.position.y = rand() % WINDOW_HEIGHT;
+    asteroid.angle = (rand() % (450 - 270 + 1)) + 270;
+    break;
+  case 4:
+    asteroid.position.x = rand() % WINDOW_WIDTH;
+    asteroid.position.y = WINDOW_HEIGHT;
+    asteroid.angle = (rand() % (360 - 180 + 1)) + 180;
+    break;
   }
 
   return asteroid;
@@ -44,15 +59,17 @@ void asteroid_render(asteroid_t *asteroid, SDL_Renderer *renderer) {
 }
 
 void asteroid_update(asteroid_t *asteroid, float delta_time) {
-  asteroid->position.x += 100.0f * delta_time;
-  asteroid->position.y += 100.0f * delta_time;
+  asteroid->position.x +=
+      ASTEROID_VELOCITY * cos(RAD(asteroid->angle)) * delta_time;
+  asteroid->position.y +=
+      ASTEROID_VELOCITY * sin(RAD(asteroid->angle)) * delta_time;
   if (asteroid->position.x < 0 || asteroid->position.x > WINDOW_WIDTH) {
     asteroid->alive = false;
   }
   if (asteroid->position.y < 0 || asteroid->position.y > WINDOW_HEIGHT) {
     asteroid->alive = false;
   }
-  asteroid->angle += 15 * delta_time;
+  asteroid->axis_angle += ASTEROID_AXIS_ROTATION * delta_time;
 }
 
 void asteroid_destroy() {

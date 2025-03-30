@@ -4,8 +4,11 @@
 #include <SDL2/SDL.h>
 #include <utils.h>
 
+#define ASTEROID_VELOCITY 100
+#define ASTEROID_AXIS_ROTATION 15
 #define ASTEROID_COUNT 5
 #define ASTEROID_VARIANTS 3
+#define ASTEROID_PADDING 8
 
 typedef enum {
   ASTEROID_SIZE_SMALL,
@@ -19,6 +22,7 @@ extern float asteroid_points[ASTEROID_VARIANTS];
 typedef struct {
   bool alive;
   double angle;
+  double axis_angle;
   asteroid_size size;
   SDL_Texture *texture;
   SDL_Rect position;

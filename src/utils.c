@@ -51,17 +51,17 @@ SDL_Texture *load_from_rendered_text(SDL_Renderer *renderer, TTF_Font *font,
   return texture;
 }
 
-bool detect_collision(SDL_Rect A, SDL_Rect B) {
+bool detect_collision(SDL_Rect A, SDL_Rect B, int padding) {
 
-  int left_A = A.x;
-  int right_A = A.x + A.w;
-  int top_A = A.y;
-  int bottom_A = A.y + A.h;
+  int left_A = A.x + padding;
+  int right_A = A.x + A.w - padding;
+  int top_A = A.y + padding;
+  int bottom_A = A.y + A.h - padding;
 
-  int left_B = B.x;
-  int right_B = B.x + B.w;
-  int top_B = B.y;
-  int bottom_B = B.y + B.h;
+  int left_B = B.x + padding;
+  int right_B = B.x + B.w - padding;
+  int top_B = B.y + padding;
+  int bottom_B = B.y + B.h - padding;
 
   if (bottom_A < top_B) {
     return false;

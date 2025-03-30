@@ -15,5 +15,5 @@ SDL_Texture *load_texture(SDL_Renderer *renderer, const char *path);
 SDL_Rect get_rect(SDL_Texture *texture);
 SDL_Texture *load_from_rendered_text(SDL_Renderer *renderer, TTF_Font *font,
                                      const char *string);
-bool detect_collision(SDL_Rect A, SDL_Rect B);
+bool detect_collision(SDL_Rect A, SDL_Rect B, int padding);
 #endif

@@ -5,8 +5,7 @@
 #include <strings.h>
 #include <utils.h>
 
-int initialize_game(game_t *game) {
-  /* Initialize SDL */
+bool load_game(game_t *game) {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     fprintf(stderr, "error: cannot initialize SDL: %s\n", SDL_GetError());
     return false;
@@ -47,19 +46,6 @@ int initialize_game(game_t *game) {
     return false;
   }
 
-  game->life = 1;
-  game->tick_count = 0;
-  game->score = 0;
-
-  sprintf(game->score_string, "SCORE: %d ", game->score);
-
-  game->player = player_create(game->renderer);
-
-  asteroid_init(game->renderer);
-  for (size_t i = 0; i < ASTEROID_COUNT; i++) {
-    game->asteroids[i] = asteroid_create();
-  }
-
   game->start_screen_texture =
       load_from_rendered_text(game->renderer, game->font, "START GAME");
   game->start_screen_rect = get_rect(game->start_screen_texture);
@@ -68,24 +54,47 @@ int initialize_game(game_t *game) {
       load_from_rendered_text(game->renderer, game->font, "GAME OVER");
   game->over_screen_rect = get_rect(game->over_screen_texture);
 
+  /* Score board position */
+  game->score_rect.x = WINDOW_WIDTH - game->score_rect.w;
+  game->score_rect.y = 0;
+
+  return true;
+}
+
+void init_game(game_t *game) {
+  game->life = 1;
+  game->tick_count = 0;
+  game->score = 0;
+  sprintf(game->score_string, "SCORE: %d ", game->score);
+
+  game->player = player_create(game->renderer);
+  asteroid_init(game->renderer);
+
   game->score_texture =
       load_from_rendered_text(game->renderer, game->font, game->score_string);
   game->score_rect = get_rect(game->score_texture);
   game->score_rect.x = WINDOW_WIDTH - game->score_rect.w;
   game->score_rect.y = 0;
-
-  return START;
 }
 
 void handle_event(game_t *game) {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
-    if (event.type == SDL_QUIT) {
+    switch (event.type) {
+    case SDL_QUIT:
       game->state = QUIT;
-    }
-    if (game->state == START && event.type == SDL_MOUSEBUTTONDOWN) {
-      game->state = RUNNING;
-    } else {
+      break;
+    case SDL_MOUSEBUTTONDOWN:
+      if (game->state == START) {
+        game->state = RUNNING;
+      } else if (game->state == OVER) {
+        game->state = RESTART;
+      }
+      break;
+    default:
+      if (game->state == RESTART) {
+        game->state = RUNNING;
+      }
       player_handle_event(&game->player, &event);
     }
   }
@@ -131,7 +140,8 @@ void update(game_t *game) {
 
   for (size_t i = 0; i < ASTEROID_COUNT; i++) {
     asteroid_update(&game->asteroids[i], delta_time);
-    if (detect_collision(game->player.position, game->asteroids[i].position)) {
+    if (detect_collision(game->player.position, game->asteroids[i].position,
+                         (game->asteroids[i].size + 1) * ASTEROID_PADDING)) {
       if (game->life == 0) {
         game->state = OVER;
       } else {
@@ -144,7 +154,7 @@ void update(game_t *game) {
     }
     for (size_t j = 0; j < BULLET_COUNT; j++) {
       if (detect_collision(game->player.bullets[i].position,
-                           game->asteroids[i].position)) {
+                           game->asteroids[i].position, 0)) {
         game->asteroids[i].point--;
       }
       if (game->asteroids[i].point == 0) {
